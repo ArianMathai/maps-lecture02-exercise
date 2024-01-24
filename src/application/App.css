@@ -1,32 +1,33 @@
 * {
-    margin: 0;
+  margin: 0;
 }
 
 #root {
-    height: 100dvh;
-    display: grid;
-    grid-template-rows: auto auto 1fr;
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
 }
 
 main {
-    background-color: lightblue;
+  background-color: lightblue;
 }
 
 nav {
-    display: flex;
-    gap: 1.5em;
+  display: flex;
+  gap: 1.5em;
 }
 
-nav, header {
-    padding: 0.5em;
+nav,
+header {
+  padding: 0.5em;
 }
 
 .kommuneinfo {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 .kommuneinfo p {
-    padding: 1em;
+  padding: 1em;
 }
