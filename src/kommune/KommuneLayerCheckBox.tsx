@@ -2,6 +2,7 @@ import React, {
   Dispatch,
   MutableRefObject,
   SetStateAction,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -12,6 +13,7 @@ import { Layer } from "ol/layer";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON } from "ol/format";
+import { MapContext } from "../context/MapContext";
 
 type NavnMedSprak = {
   sprak: "nor" | "sme" | "sma" | "smj" | "fkv";
@@ -52,12 +54,14 @@ function KommuneLayerCheckBox({
     if (features.length === 1) {
       const kommune = features[0].getProperties() as KommuneProperties;
       setClickedKommuneNavn(kommune.navn.find((n) => "nor")!.navn);
+      overlay.setPosition(e.coordinate);
     } else {
       setClickedKommuneNavn(undefined);
+      overlay.setPosition(undefined);
     }
   }
 
-  const [checked, setChecked] = useState(false);
+  const { checked, setChecked } = useContext(MapContext);
 
   const kommuneLayer = useMemo(
     () =>
@@ -85,7 +89,7 @@ function KommuneLayerCheckBox({
   const overlay = useMemo(() => new Overlay({}), []);
   const overlayRef = useRef() as MutableRefObject<HTMLDivElement>;
 
-  const dialogRef = useRef() as MutableRefObject<HTMLDialogElement>;
+  /*const dialogRef = useRef() as MutableRefObject<HTMLDialogElement>;
 
   useEffect(() => {
     if (clickedKommuneNavn) {
@@ -93,10 +97,12 @@ function KommuneLayerCheckBox({
     }
   }, [clickedKommuneNavn]);
 
+   */
+
   useEffect(() => {
-    console.log("inside add overlay");
     overlay.setElement(overlayRef.current);
     map.addOverlay(overlay);
+
     return () => {
       map.removeOverlay(overlay);
     };
@@ -105,7 +111,7 @@ function KommuneLayerCheckBox({
   useEffect(() => {
     console.log(clickedKommuneNavn);
   }, [clickedKommuneNavn]);
-
+  /*
   function handleDialogClick(e: React.MouseEvent) {
     const boundingRect = (e.target as HTMLElement).getBoundingClientRect();
     if (
@@ -121,6 +127,8 @@ function KommuneLayerCheckBox({
       setClickedKommuneNavn(undefined);
     }
   }
+  
+ */
 
   return (
     <div>
@@ -133,24 +141,8 @@ function KommuneLayerCheckBox({
         {!checked ? "Vis" : "Skjul"} kommuner
       </label>
 
-      <div ref={overlayRef}>
-        <dialog
-          className={"kommuneinfo"}
-          ref={dialogRef}
-          onClick={handleDialogClick}
-        >
-          <p>{clickedKommuneNavn}</p>
-          <form method={"dialog"}>
-            <button
-              onClick={() => {
-                dialogRef.current.close();
-                setClickedKommuneNavn(undefined);
-              }}
-            >
-              Lukk
-            </button>
-          </form>
-        </dialog>
+      <div ref={overlayRef} className={"overlay"}>
+        {<p>{clickedKommuneNavn}</p>}
       </div>
     </div>
   );

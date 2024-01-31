@@ -1,5 +1,6 @@
 import React, {
   MutableRefObject,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -13,10 +14,13 @@ import { OSM } from "ol/source";
 import { useGeographic } from "ol/proj";
 import KommuneLayerCheckBox from "../kommune/KommuneLayerCheckBox";
 import { Layer } from "ol/layer";
+import KommuneAside from "../kommune/KommuneAside";
+import { MapContext } from "../context/MapContext";
 
 useGeographic();
 
 function App() {
+  const [checked, setChecked] = useState(false);
   function handleFocusOnMe(e: React.MouseEvent) {
     e.preventDefault();
 
@@ -59,16 +63,21 @@ function App() {
 
   return (
     <>
-      <header>
-        <h1>Map app</h1>
-      </header>
-      <nav>
-        <KommuneLayerCheckBox setLayers={setLayers} map={map} />
-        <a href="#" onClick={handleFocusOnMe}>
-          Focus on my location
-        </a>
-      </nav>
-      <main ref={mapRef} className={"map"}></main>
+      <MapContext.Provider value={{ checked, setChecked }}>
+        <header>
+          <h1>Map app</h1>
+        </header>
+        <nav>
+          <KommuneLayerCheckBox setLayers={setLayers} map={map} />
+          <a href="#" onClick={handleFocusOnMe}>
+            Focus on my location
+          </a>
+        </nav>
+        <main>
+          <div ref={mapRef} className={"map"}></div>
+          <KommuneAside />
+        </main>
+      </MapContext.Provider>
     </>
   );
 }
