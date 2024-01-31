@@ -25,7 +25,7 @@ function App() {
       const { latitude, longitude } = pos.coords;
       map.getView().animate({
         center: [longitude, latitude],
-        zoom: 12,
+        zoom: 19,
       });
     });
   }

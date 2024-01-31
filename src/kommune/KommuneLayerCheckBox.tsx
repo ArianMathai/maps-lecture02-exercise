@@ -7,11 +7,32 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Map, MapBrowserEvent } from "ol";
+import { Map, MapBrowserEvent, Overlay } from "ol";
 import { Layer } from "ol/layer";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON } from "ol/format";
+
+type NavnMedSprak = {
+  sprak: "nor" | "sme" | "sma" | "smj" | "fkv";
+  navn: string;
+  rekkefolge: string;
+};
+
+type KommuneProperties = {
+  navn: NavnMedSprak[];
+  objtype: "Kommune";
+  samiskforvaltningomrade: boolean;
+  kommunenummer: string;
+};
+
+type JohannesKommuneProperties = {
+  navn: {
+    nor: string;
+    sme?: string;
+    fkv?: string;
+  };
+};
 
 function KommuneLayerCheckBox({
   setLayers,
@@ -20,15 +41,19 @@ function KommuneLayerCheckBox({
   setLayers: Dispatch<SetStateAction<Layer[]>>;
   map: Map;
 }) {
-  const [clickedKommuneNavn, setClickedKommuneNavn] = useState("");
+  const [clickedKommuneNavn, setClickedKommuneNavn] = useState<
+    string | undefined
+  >();
 
   function handleClick(e: MapBrowserEvent<MouseEvent>) {
     const features = map.getFeaturesAtPixel(e.pixel);
     console.log(features);
 
-    if (features) {
-      // @ts-ignore
-      setClickedKommuneNavn(features[0].values_.navn[0].navn);
+    if (features.length === 1) {
+      const kommune = features[0].getProperties() as KommuneProperties;
+      setClickedKommuneNavn(kommune.navn.find((n) => "nor")!.navn);
+    } else {
+      setClickedKommuneNavn(undefined);
     }
   }
 
@@ -57,17 +82,45 @@ function KommuneLayerCheckBox({
     };
   }, [checked]);
 
-  const kommuneRef = useRef() as MutableRefObject<HTMLDialogElement>;
+  const overlay = useMemo(() => new Overlay({}), []);
+  const overlayRef = useRef() as MutableRefObject<HTMLDivElement>;
+
+  const dialogRef = useRef() as MutableRefObject<HTMLDialogElement>;
 
   useEffect(() => {
     if (clickedKommuneNavn) {
-      kommuneRef.current.showModal();
+      dialogRef.current.showModal();
     }
   }, [clickedKommuneNavn]);
 
   useEffect(() => {
+    console.log("inside add overlay");
+    overlay.setElement(overlayRef.current);
+    map.addOverlay(overlay);
+    return () => {
+      map.removeOverlay(overlay);
+    };
+  }, []);
+
+  useEffect(() => {
     console.log(clickedKommuneNavn);
   }, [clickedKommuneNavn]);
+
+  function handleDialogClick(e: React.MouseEvent) {
+    const boundingRect = (e.target as HTMLElement).getBoundingClientRect();
+    if (
+      boundingRect.top < e.clientY &&
+      e.clientY < boundingRect.bottom &&
+      boundingRect.left < e.clientX &&
+      e.clientX < boundingRect.right
+    ) {
+      console.log("inside");
+    } else {
+      console.log("oustide");
+      dialogRef.current.close();
+      setClickedKommuneNavn(undefined);
+    }
+  }
 
   return (
     <div>
@@ -79,12 +132,26 @@ function KommuneLayerCheckBox({
         />
         {!checked ? "Vis" : "Skjul"} kommuner
       </label>
-      <dialog className={"kommuneinfo"} ref={kommuneRef}>
-        <p>{clickedKommuneNavn}</p>
-        <form method={"dialog"}>
-          <button>Lukk</button>
-        </form>
-      </dialog>
+
+      <div ref={overlayRef}>
+        <dialog
+          className={"kommuneinfo"}
+          ref={dialogRef}
+          onClick={handleDialogClick}
+        >
+          <p>{clickedKommuneNavn}</p>
+          <form method={"dialog"}>
+            <button
+              onClick={() => {
+                dialogRef.current.close();
+                setClickedKommuneNavn(undefined);
+              }}
+            >
+              Lukk
+            </button>
+          </form>
+        </dialog>
+      </div>
     </div>
   );
 }
