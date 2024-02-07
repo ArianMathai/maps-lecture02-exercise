@@ -12,6 +12,7 @@ type Stedsnavn = {
   navn: string;
 };
 type KommuneProperties = {
+  kommunenummer: string;
   navn: Stedsnavn[];
 };
 interface KommuneFeature extends Feature {
@@ -63,14 +64,19 @@ function useKommuneFeatures() {
       kommuneLayer?.getSource()?.un("change", handleSetFeatures);
     };
 
-     */
+ */
   }, [kommuneLayer]);
 
   return { kommuneLayer, features, visibleFeatures };
 }
 
-//const kommuneLayer = layers.find((l) => l.getClassName() === "kommuneLayer");
-//const features = (kommuneLayer?.getSource() as VectorSource)?.getFeatures();
+const hoverStyle = new Style({
+  stroke: new Stroke({
+    color: "red",
+    width: 2,
+  }),
+});
+
 function KommuneAside() {
   const { features, visibleFeatures, kommuneLayer } = useKommuneFeatures();
 
@@ -78,7 +84,7 @@ function KommuneAside() {
 
   const [hoveredKommune, setHoveredKommune] = useState<KommuneFeature>();
 
-  function handleHoveredKommune(e: MapBrowserEvent<MouseEvent>) {
+  function handleHoveredKommune(e: MapBrowserEvent<PointerEvent>) {
     const features = kommuneLayer
       .getSource()
       ?.getFeaturesAtCoordinate(e.coordinate);
@@ -86,33 +92,12 @@ function KommuneAside() {
     setHoveredKommune(
       features?.length === 1 ? (features[0] as KommuneFeature) : undefined,
     );
-    hoveredKommune?.setStyle(
-      new Style({
-        stroke: new Stroke({
-          color: "red",
-          width: 2,
-        }),
-      }),
-    );
-
-    if (!features?.includes(hoveredKommune as Feature)) {
-      hoveredKommune?.setStyle(undefined);
-    }
   }
-  /*
+
   useEffect(() => {
-    if (hoveredKommune !== undefined) {
-      hoveredKommune.setStyle(
-        new Style({
-          fill: new Fill({
-            color: "#eeeeee",
-          }),
-        }),
-      );
-    }
+    hoveredKommune?.setStyle(hoverStyle);
+    return () => hoveredKommune?.setStyle(undefined);
   }, [hoveredKommune]);
-  
- */
 
   useEffect(() => {
     if (visibleFeatures) {

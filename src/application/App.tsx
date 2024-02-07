@@ -16,6 +16,7 @@ import KommuneLayerCheckBox from "../kommune/KommuneLayerCheckBox";
 import { Layer } from "ol/layer";
 import KommuneAside from "../kommune/KommuneAside";
 import { map, MapContext } from "../context/MapContext";
+import KraftverkLayerCheckBox from "../kraftverk/KraftverkLayerCheckBox";
 
 useGeographic();
 
@@ -71,6 +72,7 @@ function App() {
         </header>
         <nav>
           <KommuneLayerCheckBox setLayers={setLayers} map={map} />
+          <KraftverkLayerCheckBox setLayers={setLayers} map={map} />
           <a href="#" onClick={handleFocusOnMe}>
             Focus on my location
           </a>

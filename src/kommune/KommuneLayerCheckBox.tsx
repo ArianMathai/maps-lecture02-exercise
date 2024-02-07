@@ -90,16 +90,6 @@ function KommuneLayerCheckBox({
   const overlay = useMemo(() => new Overlay({}), []);
   const overlayRef = useRef() as MutableRefObject<HTMLDivElement>;
 
-  /*const dialogRef = useRef() as MutableRefObject<HTMLDialogElement>;
-
-  useEffect(() => {
-    if (clickedKommuneNavn) {
-      dialogRef.current.showModal();
-    }
-  }, [clickedKommuneNavn]);
-
-   */
-
   useEffect(() => {
     overlay.setElement(overlayRef.current);
     map.addOverlay(overlay);
