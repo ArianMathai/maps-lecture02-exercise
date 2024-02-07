@@ -15,7 +15,7 @@ import { useGeographic } from "ol/proj";
 import KommuneLayerCheckBox from "../kommune/KommuneLayerCheckBox";
 import { Layer } from "ol/layer";
 import KommuneAside from "../kommune/KommuneAside";
-import { MapContext } from "../context/MapContext";
+import { map, MapContext } from "../context/MapContext";
 
 useGeographic();
 
@@ -39,7 +39,7 @@ function App() {
       source: new OSM(),
     }),
   ]);
-
+  /*
   const map = useMemo(
     () =>
       new Map({
@@ -50,6 +50,8 @@ function App() {
       }),
     [],
   );
+  
+ */
 
   const mapRef = useRef() as MutableRefObject<HTMLDivElement>;
 
@@ -63,7 +65,7 @@ function App() {
 
   return (
     <>
-      <MapContext.Provider value={{ checked, setChecked }}>
+      <MapContext.Provider value={{ map, checked, setChecked, layers }}>
         <header>
           <h1>Map app</h1>
         </header>

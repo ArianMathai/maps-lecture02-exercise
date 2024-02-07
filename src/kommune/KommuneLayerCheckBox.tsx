@@ -66,6 +66,7 @@ function KommuneLayerCheckBox({
   const kommuneLayer = useMemo(
     () =>
       new VectorLayer({
+        className: "kommuneLayer",
         source: new VectorSource({
           url: "/maps-lecture02-exercise/kommuner.json",
           format: new GeoJSON(),

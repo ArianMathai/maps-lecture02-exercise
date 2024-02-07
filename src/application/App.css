@@ -17,10 +17,14 @@ main {
 nav {
   display: flex;
   gap: 1.5em;
+  height: 3dvh;
 }
 .map {
   height: 100%;
   width: 100%;
+}
+header {
+  height: 3dvh;
 }
 
 nav,
@@ -45,10 +49,37 @@ header {
 }
 main aside {
   display: grid;
-  grid-template-columns: 1fr;
-  transition: grid-template-columns 0.5s ease-out;
+  grid-template-columns: 0;
+  /*transition: grid-template-columns 0.5s ease-in-out;*/
   overflow-x: clip;
   overflow-y: auto;
-  max-height: calc(100dvh - 100px);
+  max-height: calc(100dvh - 93px);
+  /*max-height: 94dvh;*/
   background-color: white;
+}
+main aside.visible {
+  grid-template-columns: auto;
+}
+
+main aside > * {
+  padding: 0.5rem;
+  min-width: 25ch;
+}
+
+.makeBold {
+  font-family: "Comic Sans MS", cursive;
+  font-size: 0.9em; /* Increase font size */
+  color: hotpink;
+  text-transform: uppercase; /* Convert text to uppercase */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a shadow for depth */
+  animation: shake 0.7s ease infinite alternate; /* Apply a shake animation */
+}
+
+@keyframes shake {
+  from {
+    transform: translateX(-3px); /* Start position of the shake */
+  }
+  to {
+    transform: translateX(3px); /* End position of the shake */
+  }
 }
